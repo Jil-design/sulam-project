@@ -1,0 +1,689 @@
+/* ============================================================
+   MASJID KG TOBOBON – Administration System
+   style.css
+   ============================================================ */
+
+
+/* ----------------------------------------------------------
+   1. CSS VARIABLES (Design Tokens)
+   Centralised colours and values – change here to retheme
+   ---------------------------------------------------------- */
+:root {
+  --teal:        #1a7a6e;   /* primary brand colour (Islamic teal) */
+  --teal-dark:   #0f4f46;   /* darker teal for sidebar */
+  --teal-light:  #e6f5f3;   /* very light teal for backgrounds */
+  --gold:        #c9a84c;   /* accent gold (Arabic ornament) */
+  --gold-light:  #f8f0dc;   /* light gold background */
+  --green:       #2e7d32;   /* success / money green */
+  --green-light: #e8f5e9;
+  --danger:      #c0392b;
+  --text-dark:   #1c2a2a;   /* near-black text */
+  --text-mid:    #4a5e5c;   /* medium-weight text */
+  --text-light:  #8fa8a5;   /* muted/label text */
+  --bg:          #f4f7f6;   /* page background */
+  --white:       #ffffff;
+  --border:      #dce8e6;
+  --radius:      10px;
+  --shadow:      0 2px 12px rgba(0,0,0,0.08);
+  --sidebar-w:   260px;
+  --font-display: 'Amiri', serif;
+  --font-body:   'Nunito Sans', sans-serif;
+}
+
+
+/* ----------------------------------------------------------
+   2. RESET & BASE
+   ---------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-dark);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* Utility: hide an element */
+.hidden { display: none !important; }
+
+
+/* ----------------------------------------------------------
+   3. LOGIN SCREEN
+   ---------------------------------------------------------- */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Subtle geometric teal-to-dark gradient background */
+  background: linear-gradient(135deg, var(--teal-dark) 0%, #1e6b60 50%, var(--teal) 100%);
+}
+
+.login-card {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 2.8rem 2.5rem 2.2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  /* Subtle entrance animation */
+  animation: fadeUp 0.5s ease both;
+}
+
+/* Geometric SVG ornament above the title */
+.login-ornament {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.2rem;
+}
+
+.login-ornament svg { width: 100%; height: 100%; }
+
+.login-title {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  color: var(--teal-dark);
+  margin-bottom: 0.15rem;
+}
+
+.login-subtitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.login-location {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+.login-form { text-align: left; }
+
+.login-error {
+  color: var(--danger);
+  font-size: 0.83rem;
+  text-align: center;
+  margin-bottom: 0.6rem;
+}
+
+.login-hint {
+  margin-top: 1.4rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.login-hint strong { color: var(--teal); }
+
+
+/* ----------------------------------------------------------
+   4. FORM ELEMENTS (shared across login + dashboard)
+   ---------------------------------------------------------- */
+.input-group {
+  margin-bottom: 1.1rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-mid);
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  background: var(--white);
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(26,122,110,0.12);
+}
+
+.input-group textarea { resize: vertical; }
+
+
+/* ----------------------------------------------------------
+   5. BUTTONS
+   ---------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: 0.65rem 1.5rem;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.02em;
+}
+
+.btn:active { transform: scale(0.97); }
+
+/* Primary: teal fill */
+.btn-primary {
+  background: var(--teal);
+  color: var(--white);
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+.btn-primary:hover { background: var(--teal-dark); }
+
+/* Outline for sidebar logout */
+.btn-outline-light {
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  font-size: 0.85rem;
+  padding: 0.5rem 1.2rem;
+  width: 100%;
+}
+
+.btn-outline-light:hover {
+  background: rgba(255,255,255,0.12);
+  color: var(--white);
+}
+
+/* Small danger/reset button */
+.btn-danger-sm {
+  background: var(--danger);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-danger-sm:hover { background: #a93226; }
+
+/* Success message shown after save */
+.success-msg {
+  color: var(--green);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.7rem;
+}
+
+
+/* ----------------------------------------------------------
+   6. APP LAYOUT (Sidebar + Main)
+   ---------------------------------------------------------- */
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+
+/* ------ SIDEBAR ------ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--teal-dark);
+  display: flex;
+  flex-direction: column;
+  position: fixed;          /* stays visible while scrolling */
+  top: 0; left: 0;
+  z-index: 100;
+  box-shadow: 3px 0 16px rgba(0,0,0,0.15);
+}
+
+/* Mosque name / branding at top of sidebar */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.6rem 1.2rem 1.4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-icon { flex-shrink: 0; }
+
+.sidebar-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--white);
+  line-height: 1.3;
+}
+
+.sidebar-sub {
+  font-size: 0.72rem;
+  color: var(--gold);
+  margin-top: 0.1rem;
+  letter-spacing: 0.04em;
+}
+
+/* Nav links */
+.sidebar-nav {
+  flex: 1;
+  padding: 1.2rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius);
+  color: rgba(255,255,255,0.72);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.18s, color 0.18s;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--white);
+}
+
+/* Active nav item highlighted in gold */
+.nav-item.active {
+  background: var(--gold);
+  color: var(--teal-dark);
+}
+
+.nav-icon { font-size: 1.1rem; }
+
+/* Logout at bottom */
+.sidebar-footer {
+  padding: 1.2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+
+/* ------ MAIN CONTENT ------ */
+.main-content {
+  margin-left: var(--sidebar-w);     /* push right of sidebar */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Top bar */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow);
+}
+
+.topbar-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--teal-dark);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  font-size: 0.83rem;
+  color: var(--text-mid);
+}
+
+.topbar-admin {
+  font-weight: 700;
+  color: var(--teal);
+}
+
+/* Page sections (only .active is visible) */
+.section {
+  padding: 2rem;
+  flex: 1;
+  animation: fadeIn 0.3s ease both;
+}
+
+.section-desc {
+  font-size: 0.88rem;
+  color: var(--text-light);
+  margin-bottom: 1.4rem;
+}
+
+
+/* ----------------------------------------------------------
+   7. CARDS
+   ---------------------------------------------------------- */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.6rem;
+  border: 1px solid var(--border);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid var(--teal-light);
+}
+
+.card-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--teal-dark);
+}
+
+
+/* ----------------------------------------------------------
+   8. STATS ROW (Dashboard summary cards)
+   ---------------------------------------------------------- */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin-bottom: 1.6rem;
+}
+
+.stat-card {
+  border-radius: var(--radius);
+  padding: 1.3rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  box-shadow: var(--shadow);
+}
+
+/* Colour variants */
+.stat-card.gold  { background: var(--gold-light);  border-left: 4px solid var(--gold); }
+.stat-card.teal  { background: var(--teal-light);  border-left: 4px solid var(--teal); }
+.stat-card.green { background: var(--green-light); border-left: 4px solid var(--green); }
+
+.stat-icon { font-size: 2rem; }
+
+.stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+  font-weight: 700;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-top: 0.1rem;
+}
+
+
+/* ----------------------------------------------------------
+   9. TWO-COLUMN LAYOUT (prayer times + announcements)
+   ---------------------------------------------------------- */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+}
+
+
+/* ----------------------------------------------------------
+   10. PRAYER TIMES LIST (Dashboard view)
+   ---------------------------------------------------------- */
+.prayer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prayer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: var(--teal-light);
+}
+
+.prayer-name {
+  font-weight: 700;
+  color: var(--teal-dark);
+  font-size: 0.9rem;
+}
+
+.prayer-time {
+  font-size: 0.95rem;
+  color: var(--teal);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+
+/* ----------------------------------------------------------
+   11. PRAYER FORM (Management section)
+   ---------------------------------------------------------- */
+.prayer-form {
+  max-width: 420px;
+}
+
+.prayer-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+}
+
+.prayer-input-row label {
+  font-weight: 700;
+  color: var(--text-mid);
+  font-size: 0.9rem;
+  min-width: 140px;
+}
+
+.prayer-input-row input[type="time"] {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--teal-dark);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 140px;
+}
+
+.prayer-input-row input[type="time"]:focus {
+  border-color: var(--teal);
+}
+
+.prayer-form .btn-primary {
+  margin-top: 1.2rem;
+  width: auto;
+  padding: 0.65rem 1.8rem;
+}
+
+
+/* ----------------------------------------------------------
+   12. ANNOUNCEMENTS (Dashboard + Admin)
+   ---------------------------------------------------------- */
+/* Dashboard: compact list */
+.ann-item-dash {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ann-item-dash:last-child { border-bottom: none; }
+
+.ann-title-dash {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--teal-dark);
+}
+
+.ann-body-dash {
+  font-size: 0.83rem;
+  color: var(--text-mid);
+  margin-top: 0.2rem;
+}
+
+.ann-no-items {
+  color: var(--text-light);
+  font-size: 0.88rem;
+  padding: 0.5rem 0;
+}
+
+/* Admin: full cards with delete button */
+.ann-admin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--teal-light);
+  margin-bottom: 0.7rem;
+  gap: 0.8rem;
+}
+
+.ann-admin-text .ann-admin-title {
+  font-weight: 700;
+  color: var(--teal-dark);
+  margin-bottom: 0.2rem;
+}
+
+.ann-admin-text .ann-admin-body {
+  font-size: 0.85rem;
+  color: var(--text-mid);
+}
+
+.ann-delete-btn {
+  background: var(--danger);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.ann-delete-btn:hover { background: #a93226; }
+
+
+/* ----------------------------------------------------------
+   13. DONATIONS
+   ---------------------------------------------------------- */
+.donation-summary {
+  text-align: center;
+  background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+  border: none;
+  color: var(--white);
+}
+
+.donation-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.75;
+  margin-bottom: 0.5rem;
+}
+
+.donation-total {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Donation history rows */
+.donation-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.donation-history-item:last-child { border-bottom: none; }
+
+.donation-amount-pos { font-weight: 700; color: var(--green); }
+
+.donation-note-txt { color: var(--text-light); font-size: 0.82rem; }
+
+.donation-date { color: var(--text-light); font-size: 0.78rem; }
+
+
+/* ----------------------------------------------------------
+   14. ANIMATIONS
+   ---------------------------------------------------------- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* ----------------------------------------------------------
+   15. RESPONSIVE – basic adjustments for smaller screens
+   ---------------------------------------------------------- */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 220px; }
+  .two-col { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 650px) {
+  :root { --sidebar-w: 0px; }
+
+  .sidebar {
+    display: none; /* on very small screens, hide sidebar (simplified) */
+  }
+
+  .main-content { margin-left: 0; }
+
+  .stats-row { grid-template-columns: 1fr; }
+
+  .section { padding: 1rem; }
+}

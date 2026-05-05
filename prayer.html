@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masjid Kg Tobobon – Prayer Times</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Google Fonts: Amiri (Arabic-inspired serif) + Nunito Sans (clean body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ============================================================
+       MAIN APP (Prayer Times)
+  ============================================================ -->
+  <div id="app" class="app">
+
+    <!-- ---- SIDEBAR NAVIGATION ---- -->
+    <aside class="sidebar">
+      <!-- Mosque branding -->
+      <div class="sidebar-header">
+        <div class="sidebar-icon">
+          <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
+            <!-- Simple mosque dome icon -->
+            <ellipse cx="20" cy="22" rx="14" ry="10" fill="var(--gold)" opacity="0.9"/>
+            <rect x="6" y="22" width="28" height="10" rx="2" fill="var(--teal-dark)"/>
+            <rect x="18" y="10" width="4" height="12" fill="var(--teal-dark)"/>
+            <ellipse cx="20" cy="10" rx="6" ry="4" fill="var(--gold)"/>
+            <rect x="8" y="28" width="4" height="6" rx="1" fill="var(--gold)" opacity="0.6"/>
+            <rect x="28" y="28" width="4" height="6" rx="1" fill="var(--gold)" opacity="0.6"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="sidebar-title">Masjid Kg Tobobon</h2>
+          <p class="sidebar-sub">Kg Tobobon, Sabah</p>
+        </div>
+      </div>
+
+      <!-- Navigation links -->
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a href="prayer.html" class="nav-item active">
+          <span class="nav-icon">🕌</span> Prayer Times
+        </a>
+        <a href="announcements.html" class="nav-item">
+          <span class="nav-icon">📢</span> Announcements
+        </a>
+        <a href="donations.html" class="nav-item">
+          <span class="nav-icon">💰</span> Donations
+        </a>
+      </nav>
+
+      <!-- Logout button at bottom of sidebar -->
+      <div class="sidebar-footer">
+        <button class="btn btn-outline-light" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </aside>
+
+
+    <!-- ---- MAIN CONTENT AREA ---- -->
+    <main class="main-content">
+
+      <!-- Top bar -->
+      <header class="topbar">
+        <h2 id="section-title" class="topbar-title">Prayer Times</h2>
+        <div class="topbar-right">
+          <span id="current-date" class="topbar-date"></span>
+          <span class="topbar-admin">👤 Admin</span>
+        </div>
+      </header>
+
+
+      <!-- ==================================================
+           SECTION: PRAYER TIMES MANAGEMENT
+      ================================================== -->
+      <section id="section-prayer" class="section active">
+        <div class="card">
+          <div class="card-header">
+            <h3>🕌 Update Prayer Times</h3>
+          </div>
+          <p class="section-desc">Edit the prayer times below. Changes are saved automatically and shown on the dashboard.</p>
+
+          <!-- Prayer time form -->
+          <div class="prayer-form">
+            <!-- Each row: prayer name label + time input -->
+            <div class="prayer-input-row">
+              <label>Fajr (Subuh)</label>
+              <input type="time" id="time-fajr" />
+            </div>
+            <div class="prayer-input-row">
+              <label>Dhuhr (Zohor)</label>
+              <input type="time" id="time-dhuhr" />
+            </div>
+            <div class="prayer-input-row">
+              <label>Asr (Asar)</label>
+              <input type="time" id="time-asr" />
+            </div>
+            <div class="prayer-input-row">
+              <label>Maghrib</label>
+              <input type="time" id="time-maghrib" />
+            </div>
+            <div class="prayer-input-row">
+              <label>Isha (Isyak)</label>
+              <input type="time" id="time-isha" />
+            </div>
+
+            <button class="btn btn-primary" onclick="savePrayerTimes()">
+              💾 Save Prayer Times
+            </button>
+            <p id="prayer-saved-msg" class="success-msg hidden">✔ Prayer times updated!</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Link the JavaScript file -->
+  <script src="js/script.js"></script>
+  <script>
+    // Override handleLogout for prayer page to redirect to login
+    function handleLogout() {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html></content>
