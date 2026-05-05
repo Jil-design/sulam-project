@@ -127,6 +127,137 @@ a { text-decoration: none; color: inherit; }
 
 .login-hint strong { color: var(--teal); }
 
+.register-link {
+  margin-top: 1.2rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-align: center;
+}
+
+.register-link a {
+  color: var(--gold);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.register-link a:hover {
+  color: var(--teal);
+  text-decoration: underline;
+}
+
+
+/* ----------------------------------------------------------
+   3.1. REGISTER SCREEN (extends login styles)
+   ---------------------------------------------------------- *
+
+/* Two-column row (first/last name) */
+
+
+   .form-section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dark);
+  margin: 1.4rem 0 0.8rem;
+  text-align: left;
+}
+
+.input-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.input-row .input-group {
+  flex: 1;
+}
+
+/* Select dropdown matches input style */
+select {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  background: white;
+  color: var(--text-dark);
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+select:focus {
+  border-color: var(--teal);
+}
+
+/* Strength bar styling */
+.strength-bar {
+  display: flex;
+  gap: 4px;
+  margin-top: 0.4rem;
+}
+
+.strength-bar span {
+  flex: 1;
+  height: 5px;
+  background: #d6cdb8;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.strength-label {
+  font-size: 0.75rem;
+  margin-top: 0.3rem;
+  color: var(--text-light);
+}
+
+/* Success message */
+.success-msg {
+  color: var(--teal);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-bottom: 0.6rem;
+}
+
+/* Terms text at bottom */
+.terms-note {
+  margin-top: 1.2rem;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.terms-note a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.terms-note a:hover {
+  text-decoration: underline;
+}
+
+/* Make register link consistent with login page style */
+.register-link {
+  margin-top: 1.4rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-align: center;
+}
+
+.register-link a {
+  color: var(--gold);
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.register-link a:hover {
+  color: var(--teal);
+  text-decoration: underline;
+}
+
 
 /* ----------------------------------------------------------
    4. FORM ELEMENTS (shared across login + dashboard)

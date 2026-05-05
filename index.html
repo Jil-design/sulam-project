@@ -50,6 +50,11 @@
         <button id="login-btn" class="btn btn-primary" onclick="handleLogin()">
           Sign In
         </button>
+
+        <!-- Register link -->
+        <p class="register-link">
+         New user? <a href="users/register.html">Create an account</a>
+        </p>
       </div>
 
       <p class="login-hint">Demo: <strong>admin</strong> / <strong>1234</strong></p>
@@ -65,7 +70,7 @@
 
       if (username === 'admin' && password === '1234') {
         // Successful login, redirect to dashboard
-        window.location.href = 'dashboard.html';
+        window.location.href = 'admin/dashboard.html';
       } else {
         errorMsg.classList.remove('hidden');
       }
