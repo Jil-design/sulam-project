@@ -1,5 +1,5 @@
 /* ============================================================
-   MASJID KG TOBOBON – Administration System
+   MASJID Kg. Bandulan – Administration System
    script.js
    ============================================================
    HOW THIS FILE IS ORGANISED:
@@ -49,6 +49,24 @@ const PRAYER_DISPLAY_NAMES = {
   maghrib: "Maghrib",
   isha:    "Isha (Isyak)",
 };
+
+function getAuthToken() {
+  return localStorage.getItem('token');
+}
+
+function getAuthHeaders() {
+  const token = getAuthToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+function requireAuth() {
+  const token = getAuthToken();
+  if (!token) {
+    window.location.href = '/index.html';
+    return null;
+  }
+  return token;
+}
 
 
 /* ----------------------------------------------------------
@@ -229,7 +247,10 @@ async function savePrayerTimes() {
   try {
     const response = await fetch('http://localhost:5000/api/prayer-times', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
+      },
       body: JSON.stringify(times),
     });
     if (!response.ok) throw new Error('Failed to save');
@@ -324,7 +345,10 @@ async function addAnnouncement() {
   try {
     const response = await fetch('http://localhost:5000/api/announcements', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
+      },
       body: JSON.stringify(newItem),
     });
     if (!response.ok) throw new Error('Failed to add');
@@ -346,12 +370,13 @@ async function addAnnouncement() {
  * deleteAnnouncement(id)
  * Deletes the announcement with the matching id from the API.
  *
- * @param {string} id - the announcement's MongoDB id
+ * @param {string} id - the announcement's id
  */
 async function deleteAnnouncement(id) {
   try {
     const response = await fetch(`http://localhost:5000/api/announcements/${id}`, {
       method: 'DELETE',
+      headers: getAuthHeaders(),
     });
     if (!response.ok) throw new Error('Failed to delete');
     
@@ -410,7 +435,7 @@ async function renderAdminAnnouncements() {
     const div = document.createElement("div");
     div.className = "ann-admin-item";
 
-    const dateStr = new Date(item.date).toLocaleDateString();
+    const dateStr = new Date(item.created_at).toLocaleDateString();
 
     div.innerHTML =
       '<div class="ann-admin-text">' +
@@ -418,7 +443,7 @@ async function renderAdminAnnouncements() {
         '<p class="ann-admin-body">'  + escapeHtml(item.body)  + '</p>' +
         '<p style="font-size:0.75rem;color:var(--text-light);margin-top:0.3rem;">' + dateStr + '</p>' +
       '</div>' +
-      '<button class="ann-delete-btn" onclick="deleteAnnouncement(\'' + item._id + '\')">Delete</button>';
+      '<button class="ann-delete-btn" onclick="deleteAnnouncement(\'' + item.id + '\')">Delete</button>';
 
     container.appendChild(div);
   });
@@ -485,7 +510,10 @@ async function addDonation() {
   try {
     const response = await fetch('http://localhost:5000/api/donations', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
+      },
       body: JSON.stringify(donation),
     });
     if (!response.ok) throw new Error('Failed to add');
@@ -514,6 +542,7 @@ async function resetDonations() {
   try {
     const response = await fetch('http://localhost:5000/api/donations', {
       method: 'DELETE',
+      headers: getAuthHeaders(),
     });
     if (!response.ok) throw new Error('Failed to reset');
     
@@ -554,7 +583,7 @@ async function renderDonationHistory() {
   history.forEach(function (record) {
     const div = document.createElement("div");
     div.className = "donation-history-item";
-    const dateStr = new Date(record.date).toLocaleDateString();
+    const dateStr = new Date(record.created_at).toLocaleDateString();
     div.innerHTML =
       '<div>' +
         '<span class="donation-amount-pos">+ RM ' + record.amount.toFixed(2) + '</span>' +
@@ -674,9 +703,13 @@ function updateCurrentDate() {
    Runs once when the page finishes loading
    ---------------------------------------------------------- */
 document.addEventListener("DOMContentLoaded", async function () {
+  // Require valid auth token for admin pages
+  requireAuth();
+
   // Show today's date in the top bar
   updateCurrentDate();
 
   // Pre-load prayer form values (so inputs are ready when section opens)
   await loadPrayerForm();
 });
+

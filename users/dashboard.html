@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masjid Kg. Bandulan – User Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <!-- Google Fonts: Amiri (Arabic-inspired serif) + Nunito Sans (clean body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ============================================================
+       MAIN APP (User Dashboard)
+  ============================================================ -->
+  <div id="app" class="app">
+
+    <!-- ---- SIDEBAR NAVIGATION ---- -->
+    <aside class="sidebar">
+      <!-- Mosque branding -->
+      <div class="sidebar-header">
+        <div class="sidebar-icon">
+          <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
+            <!-- Simple mosque dome icon -->
+            <ellipse cx="20" cy="22" rx="14" ry="10" fill="var(--gold)" opacity="0.9"/>
+            <rect x="6" y="22" width="28" height="10" rx="2" fill="var(--teal-dark)"/>
+            <rect x="18" y="10" width="4" height="12" fill="var(--teal-dark)"/>
+            <ellipse cx="20" cy="10" rx="6" ry="4" fill="var(--gold)"/>
+            <rect x="8" y="28" width="4" height="6" rx="1" fill="var(--gold)" opacity="0.6"/>
+            <rect x="28" y="28" width="4" height="6" rx="1" fill="var(--gold)" opacity="0.6"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="sidebar-title">Masjid Kg. Bandulan</h2>
+          <p class="sidebar-sub">Kg. Bandulan, Sabah</p>
+        </div>
+      </div>
+
+      <!-- Navigation links (read-only for users) -->
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item active">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a href="announcements.html" class="nav-item">
+          <span class="nav-icon">📢</span> Announcements
+        </a>
+        <a href="donations.html" class="nav-item">
+          <span class="nav-icon">💰</span> Donations
+        </a>
+      </nav>
+
+      <!-- Logout button at bottom of sidebar -->
+      <div class="sidebar-footer">
+        <button class="btn btn-outline-light" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </aside>
+
+
+    <!-- ---- MAIN CONTENT AREA ---- -->
+    <main class="main-content">
+
+      <!-- Top bar -->
+      <header class="topbar">
+        <h2 id="section-title" class="topbar-title">Dashboard</h2>
+        <div class="topbar-right">
+          <span id="current-date" class="topbar-date"></span>
+          <span class="topbar-user" id="user-name">👤 User</span>
+        </div>
+      </header>
+
+
+      <!-- ==================================================
+           SECTION: USER DASHBOARD (Read-only view)
+      ================================================== -->
+      <section id="section-dashboard" class="section active">
+
+        <!-- Welcome message -->
+        <div class="welcome-card">
+          <h3>Welcome to Masjid Kg. Bandulan</h3>
+          <p>View prayer times, announcements, and donation information. All information is read-only for your reference.</p>
+        </div>
+
+        <!-- Quick access cards (read-only) -->
+        <div class="stats-row">
+          <!-- Prayer times count -->
+          <div class="stat-card gold">
+            <div class="stat-icon">🕐</div>
+            <div>
+              <p class="stat-label">Prayer Times</p>
+              <p class="stat-value">5 Waktu</p>
+              <p class="stat-note">View only</p>
+            </div>
+          </div>
+          <!-- Announcements count -->
+          <div class="stat-card teal">
+            <div class="stat-icon">📋</div>
+            <div>
+              <p class="stat-label">Announcements</p>
+              <p class="stat-value" id="stat-announcements">0</p>
+              <p class="stat-note">Latest updates</p>
+            </div>
+          </div>
+          <!-- Donation information -->
+          <div class="stat-card green">
+            <div class="stat-icon">💚</div>
+            <div>
+              <p class="stat-label">Donations</p>
+              <p class="stat-value">View Info</p>
+              <p class="stat-note">Community giving</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prayer times & announcements cards -->
+        <div class="two-col">
+
+          <div class="card">
+            <div class="card-header">
+              <h3>🕌 Prayer Times</h3>
+            </div>
+            <div id="dashboard-prayer-list" class="prayer-list">
+              <p class="empty-state">Loading prayer schedule...</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>📢 Announcements</h3>
+            </div>
+            <div id="dashboard-announcements">
+              <p class="empty-state">No announcements at this time.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ============================================================
+       SCRIPT
+  ============================================================ -->
+  <script>
+    const API_URL = 'http://localhost:5000/api';
+
+    // Check authentication
+    function checkAuth() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Not authenticated, redirect to login
+        window.location.href = '/index.html';
+        return false;
+      }
+      return token;
+    }
+
+    // Set current date
+    function updateDate() {
+      const today = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
+    }
+
+    // Get user name from session
+    function getUserName() {
+      const userName = localStorage.getItem('userName') || 'User';
+      document.getElementById('user-name').textContent = `👤 ${userName}`;
+    }
+
+    // View-only notification
+    function viewOnly(section) {
+      alert(`${section} is only available in the admin dashboard. Users have read-only access here.`);
+      return false;
+    }
+
+    // Handle logout
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userRole');
+      window.location.href = '/index.html';
+    }
+
+    // Load announcements from backend
+    function loadAnnouncements() {
+      const announcementsList = document.getElementById('dashboard-announcements');
+      
+      fetch(`${API_URL}/announcements`)
+        .then(response => response.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            announcementsList.innerHTML = data.slice(0, 3).map(ann => `
+              <div class="ann-item-dash">
+                <p class="ann-title-dash">${ann.title || 'Announcement'}</p>
+                <p class="ann-body-dash">${ann.body || ''}</p>
+                <p class="ann-meta">${new Date(ann.created_at).toLocaleDateString()}</p>
+              </div>
+            `).join('');
+          } else {
+            announcementsList.innerHTML = '<p class="empty-state">No announcements at this time.</p>';
+          }
+        })
+        .catch(error => {
+          console.error('Error loading announcements:', error);
+          announcementsList.innerHTML = '<p class="empty-state">Unable to load announcements.</p>';
+        });
+    }
+
+    // Load prayer times from backend
+    function loadPrayerTimes() {
+      const prayerList = document.getElementById('dashboard-prayer-list');
+      
+      fetch(`${API_URL}/prayer-times`)
+        .then(response => response.json())
+        .then(data => {
+          if (data) {
+            const times = [
+              { name: 'Fajr', time: data.fajr },
+              { name: 'Dhuhr', time: data.dhuhr },
+              { name: 'Asr', time: data.asr },
+              { name: 'Maghrib', time: data.maghrib },
+              { name: 'Isha', time: data.isha }
+            ];
+            
+            prayerList.innerHTML = times.map(p => `
+              <div class="prayer-row">
+                <span class="prayer-name">${p.name}</span>
+                <span class="prayer-time">${p.time}</span>
+              </div>
+            `).join('');
+          }
+        })
+        .catch(error => {
+          console.error('Error loading prayer times:', error);
+          prayerList.innerHTML = '<p class="empty-state">Unable to load prayer schedule.</p>';
+        });
+    }
+
+    // Initialize dashboard
+    function initDashboard() {
+      // Check authentication first
+      if (!checkAuth()) return;
+      
+      updateDate();
+      getUserName();
+      loadAnnouncements();
+      loadPrayerTimes();
+    }
+
+    // Run on page load
+    window.addEventListener('DOMContentLoaded', initDashboard);
+  </script>
+
+</body>
+</html>
+

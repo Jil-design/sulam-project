@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Masjid Kg Tobobon – Register</title>
+  <title>Masjid Kg. Bandulan – Register</title>
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
@@ -22,9 +22,9 @@
         </svg>
       </div>
 
-      <h1 class="login-title">Masjid Kg Tobobon</h1>
+      <h1 class="login-title">Masjid Kg. Bandulan</h1>
       <p class="login-subtitle">Create Account</p>
-      <p class="login-location">Kg Tobobon, Sabah, Malaysia</p>
+      <p class="login-location">Kg. Bandulan, Sabah, Malaysia</p>
 
       <!-- Registration Form -->
       <div class="login-form">
@@ -158,13 +158,59 @@
       if (password.length < 8) return showError('Password must be at least 8 characters.');
       if (password !== confirmPwd) return showError('Passwords do not match.');
 
-      // Simulate successful registration
-      successEl.classList.remove('hidden');
-      document.getElementById('register-btn').disabled = true;
+      // Send registration to backend
+      const registerBtn = document.getElementById('register-btn');
+      registerBtn.disabled = true;
+      registerBtn.textContent = 'Creating Account...';
 
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 2000);
+      fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone,
+          username,
+          password,
+          role: role || 'user'
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          showError(data.error);
+          registerBtn.disabled = false;
+          registerBtn.textContent = 'Create Account';
+        } else {
+          // Save token and user info
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userId', data.user.id);
+          localStorage.setItem('userName', `${data.user.firstName} ${data.user.lastName}`);
+          localStorage.setItem('userRole', data.user.role);
+          localStorage.setItem('userEmail', data.user.email);
+
+          successEl.textContent = 'Account created successfully! Redirecting to dashboard…';
+          successEl.classList.remove('hidden');
+
+          // Redirect based on role
+          setTimeout(() => {
+            if (data.user.role === 'admin') {
+              window.location.href = '/admin/admin_dashboard.html';
+            } else {
+              window.location.href = '/users/dashboard.html';
+            }
+          }, 2000);
+        }
+      })
+      .catch(error => {
+        showError('An error occurred. Please try again.');
+        console.error('Registration error:', error);
+        registerBtn.disabled = false;
+        registerBtn.textContent = 'Create Account';
+      });
     }
 
     function showError(msg) {
@@ -180,3 +226,4 @@
   </script>
 </body>
 </html>
+

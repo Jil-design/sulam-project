@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Masjid Kg Tobobon – Login</title>
+  <title>Masjid Kg. Bandulan – Login</title>
   <link rel="stylesheet" href="/css/style.css" />
   <!-- Google Fonts: Amiri (Arabic-inspired serif) + Nunito Sans (clean body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,9 +25,9 @@
         </svg>
       </div>
 
-      <h1 class="login-title">Masjid Kg Tobobon</h1>
+      <h1 class="login-title">Masjid Kg. Bandulan</h1>
       <p class="login-subtitle">Administration System</p>
-      <p class="login-location">Kg Tobobon, Sabah, Malaysia</p>
+      <p class="login-location">Kg. Bandulan, Sabah, Malaysia</p>
 
       <!-- Login Form -->
       <div class="login-form">
@@ -57,24 +57,70 @@
         </p>
       </div>
 
-      <p class="login-hint">Demo: <strong>admin</strong> / <strong>1234</strong></p>
+      <p class="login-hint">Demo Admin: <strong>admin</strong> / <strong>1234</strong><br />Demo User: <strong>demo</strong> / <strong>1234</strong></p>
     </div>
   </div>
 
   <script>
-    // Simple login handler for login page
-    function handleLogin() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const errorMsg = document.getElementById('login-error');
+    const DEMO_USERS = {
+      admin: {
+        username: 'admin',
+        password: '1234',
+        role: 'admin',
+        displayName: 'Admin',
+        email: 'admin@example.com',
+      },
+      demo: {
+        username: 'demo',
+        password: '1234',
+        role: 'user',
+        displayName: 'Demo User',
+        email: 'demo@example.com',
+      }
+    };
 
-      if (username === 'admin' && password === '1234') {
-        // Successful login, redirect to dashboard
-        window.location.href = 'admin/dashboard.html';
-      } else {
+    function handleLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('login-error');
+      const loginBtn = document.getElementById('login-btn');
+
+      errorMsg.classList.add('hidden');
+
+      if (!username || !password) {
+        errorMsg.textContent = 'Please enter username and password.';
         errorMsg.classList.remove('hidden');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in...';
+
+      const user = Object.values(DEMO_USERS).find(u => u.username === username && u.password === password);
+      if (!user) {
+        errorMsg.textContent = 'Invalid username or password.';
+        errorMsg.classList.remove('hidden');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign In';
+        return;
+      }
+
+      localStorage.setItem('token', 'local-demo-token');
+      localStorage.setItem('userName', user.displayName);
+      localStorage.setItem('userRole', user.role);
+      localStorage.setItem('userEmail', user.email);
+      localStorage.setItem('userId', user.username);
+
+      if (user.role === 'admin') {
+        window.location.href = '/admin/admin_dashboard.html';
+      } else {
+        window.location.href = '/users/dashboard.html';
       }
     }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
+    });
   </script>
 </body>
 </html></content>

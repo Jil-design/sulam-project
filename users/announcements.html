@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masjid Kg. Bandulan – Announcements</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div id="app" class="app">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-icon">
+          <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
+            <ellipse cx="20" cy="22" rx="14" ry="10" fill="var(--gold)" opacity="0.9"/>
+            <rect x="6" y="22" width="28" height="10" rx="2" fill="var(--teal-dark)"/>
+            <rect x="18" y="10" width="4" height="12" fill="var(--teal-dark)"/>
+            <ellipse cx="20" cy="10" rx="6" ry="4" fill="var(--gold)"/>
+            <rect x="8" y="28" width="4" height="6" rx="1" fill="var(--gold)" opacity="0.6"/>
+            <rect x="28" y="28" width="4" height="6" rx="1" fill="var(--gold)" opacity="0.6"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="sidebar-title">Masjid Kg. Bandulan</h2>
+          <p class="sidebar-sub">Kg. Bandulan, Sabah</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a href="announcements.html" class="nav-item active">
+          <span class="nav-icon">📢</span> Announcements
+        </a>
+        <a href="donations.html" class="nav-item">
+          <span class="nav-icon">💰</span> Donations
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-outline-light" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <h2 class="topbar-title">Announcements</h2>
+        <div class="topbar-right">
+          <span id="current-date" class="topbar-date"></span>
+          <span class="topbar-user" id="user-name">👤 User</span>
+        </div>
+      </header>
+
+      <section class="section active">
+        <div class="card">
+          <div class="card-header">
+            <h3>📢 All Announcements</h3>
+          </div>
+          <div id="announcement-list" class="announcements-list">
+            <p class="empty-state">Loading announcements...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api';
+
+    function checkAuth() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/index.html';
+        return false;
+      }
+      return true;
+    }
+
+    function updateDate() {
+      const today = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
+    }
+
+    function getUserName() {
+      const userName = localStorage.getItem('userName') || 'User';
+      document.getElementById('user-name').textContent = `👤 ${userName}`;
+    }
+
+    function viewOnly(section) {
+      alert(`${section} is only available in the admin dashboard. Users have read-only access here.`);
+      return false;
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userRole');
+      window.location.href = '/index.html';
+    }
+
+    async function loadAnnouncements() {
+      const container = document.getElementById('announcement-list');
+      try {
+        const response = await fetch(`${API_URL}/announcements`);
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = '<p class="empty-state">No announcements at this time.</p>';
+          return;
+        }
+
+        container.innerHTML = data.map(ann => `
+          <div class="ann-item-dash">
+            <p class="ann-title-dash">${ann.title || 'Announcement'}</p>
+            <p class="ann-body-dash">${ann.body || ''}</p>
+            <p class="ann-meta">${new Date(ann.created_at).toLocaleDateString()}</p>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading announcements:', error);
+        container.innerHTML = '<p class="empty-state">Unable to load announcements.</p>';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!checkAuth()) return;
+      updateDate();
+      getUserName();
+      loadAnnouncements();
+    });
+  </script>
+</body>
+</html>
+

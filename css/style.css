@@ -1,5 +1,5 @@
 /* ============================================================
-   MASJID KG TOBOBON – Administration System
+   MASJID Kg. Bandulan – Administration System
    style.css
    ============================================================ */
 
@@ -63,6 +63,7 @@ a { text-decoration: none; color: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 3rem 0;
   /* Subtle geometric teal-to-dark gradient background */
   background: linear-gradient(135deg, var(--teal-dark) 0%, #1e6b60 50%, var(--teal) 100%);
 }
@@ -73,6 +74,7 @@ a { text-decoration: none; color: inherit; }
   padding: 2.8rem 2.5rem 2.2rem;
   width: 100%;
   max-width: 400px;
+  margin: 1rem 0;
   text-align: center;
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
   /* Subtle entrance animation */
@@ -558,6 +560,32 @@ select:focus {
   box-shadow: var(--shadow);
 }
 
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+}
+
+.info-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 1.4rem;
+}
+
+.info-card h4 {
+  margin-bottom: 0.65rem;
+  font-size: 0.95rem;
+  color: var(--teal-dark);
+}
+
+.info-card p {
+  color: var(--text-mid);
+  line-height: 1.65;
+}
+
 /* Colour variants */
 .stat-card.gold  { background: var(--gold-light);  border-left: 4px solid var(--gold); }
 .stat-card.teal  { background: var(--teal-light);  border-left: 4px solid var(--teal); }
@@ -692,6 +720,13 @@ select:focus {
   margin-top: 0.2rem;
 }
 
+.ann-meta {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-top: 0.45rem;
+}
+
 .ann-no-items {
   color: var(--text-light);
   font-size: 0.88rem;
@@ -783,6 +818,88 @@ select:focus {
 
 
 /* ----------------------------------------------------------
+   14.5. DONATION FORM
+   ---------------------------------------------------------- */
+.donation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--teal-dark);
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  padding: 0.75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--teal-dark);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: var(--teal);
+}
+
+.form-group input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.donation-form .btn-primary {
+  align-self: flex-start;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+}
+
+/* ----------------------------------------------------------
+   14.6. ANALYTICS CONTROLS
+   ---------------------------------------------------------- */
+.analytics-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: var(--teal-dark);
+}
+
+.filter-group select {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--teal-dark);
+  font-size: 0.9rem;
+}
+
+/* ----------------------------------------------------------
    14. ANIMATIONS
    ---------------------------------------------------------- */
 @keyframes fadeUp {
@@ -818,3 +935,4 @@ select:focus {
 
   .section { padding: 1rem; }
 }
+

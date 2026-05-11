@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masjid Kg. Bandulan – Donations</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div id="app" class="app">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-icon">
+          <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
+            <ellipse cx="20" cy="22" rx="14" ry="10" fill="var(--gold)" opacity="0.9"/>
+            <rect x="6" y="22" width="28" height="10" rx="2" fill="var(--teal-dark)"/>
+            <rect x="18" y="10" width="4" height="12" fill="var(--teal-dark)"/>
+            <ellipse cx="20" cy="10" rx="6" ry="4" fill="var(--gold)"/>
+            <rect x="8" y="28" width="4" height="6" rx="1" fill="var(--gold)" opacity="0.6"/>
+            <rect x="28" y="28" width="4" height="6" rx="1" fill="var(--gold)" opacity="0.6"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="sidebar-title">Masjid Kg. Bandulan</h2>
+          <p class="sidebar-sub">Kg. Bandulan, Sabah</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a href="announcements.html" class="nav-item">
+          <span class="nav-icon">📢</span> Announcements
+        </a>
+        <a href="donations.html" class="nav-item active">
+          <span class="nav-icon">💰</span> Donations
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-outline-light" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <h2 class="topbar-title">Donations</h2>
+        <div class="topbar-right">
+          <span id="current-date" class="topbar-date"></span>
+          <span class="topbar-user" id="user-name">👤 User</span>
+        </div>
+      </header>
+
+      <section class="section active">
+        <div class="card">
+          <div class="card-header">
+            <h3>💚 Your Donations</h3>
+          </div>
+          <div class="stats-row" style="margin-bottom:1.5rem;">
+            <div class="stat-card green" style="flex-direction:column;align-items:flex-start;gap:0.35rem;">
+              <div class="stat-icon">💰</div>
+              <div>
+                <p class="stat-label">Total Given</p>
+                <p class="stat-value" id="donation-total">RM 0.00</p>
+              </div>
+            </div>
+          </div>
+          <div id="donation-history" class="donation-history">
+            <p class="empty-state">Loading your donations...</p>
+          </div>
+        </div>
+
+        <!-- Make a donation form -->
+        <div class="card">
+          <div class="card-header">
+            <h3>💝 Make a Donation</h3>
+          </div>
+          <form id="donation-form" class="donation-form">
+            <div class="form-group">
+              <label for="donation-amount">Amount (RM)</label>
+              <input type="number" id="donation-amount" step="0.01" min="0.01" placeholder="0.00" required />
+            </div>
+            <div class="form-group">
+              <label for="donation-note">Note (Optional)</label>
+              <input type="text" id="donation-note" placeholder="Purpose of donation" maxlength="100" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Donation</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api';
+
+    function getAuthHeaders() {
+      const token = localStorage.getItem('token');
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    function checkAuth() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/index.html';
+        return false;
+      }
+      return true;
+    }
+
+    function updateDate() {
+      const today = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
+    }
+
+    function getUserName() {
+      const userName = localStorage.getItem('userName') || 'User';
+      document.getElementById('user-name').textContent = `👤 ${userName}`;
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userRole');
+      window.location.href = '/index.html';
+    }
+
+    async function loadDonations() {
+      const historyEl = document.getElementById('donation-history');
+      const totalEl = document.getElementById('donation-total');
+      try {
+        const response = await fetch(`${API_URL}/donations`, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+          },
+        });
+        const data = await response.json();
+
+        if (!data || !Array.isArray(data.history) || data.history.length === 0) {
+          historyEl.innerHTML = '<p class="empty-state">No donations found.</p>';
+          totalEl.textContent = 'RM 0.00';
+          return;
+        }
+
+        totalEl.textContent = 'RM ' + (data.total || 0).toFixed(2);
+        historyEl.innerHTML = data.history.map(donation => `
+          <div class="donation-history-item">
+            <div>
+              <span class="donation-amount-pos">+ RM ${Number(donation.amount).toFixed(2)}</span>
+              <span class="donation-note-txt">– ${donation.note || 'Donation'}</span>
+            </div>
+            <span class="donation-date">${new Date(donation.created_at).toLocaleDateString()}</span>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading donations:', error);
+        historyEl.innerHTML = '<p class="empty-state">Unable to load donations.</p>';
+      }
+    }
+
+    async function submitDonation(event) {
+      event.preventDefault();
+      const amount = parseFloat(document.getElementById('donation-amount').value);
+      const note = document.getElementById('donation-note').value.trim();
+      const submitBtn = event.target.querySelector('button[type="submit"]');
+
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid donation amount.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      try {
+        const response = await fetch(`${API_URL}/donations`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+          },
+          body: JSON.stringify({ amount, note }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Thank you for your donation!');
+          document.getElementById('donation-form').reset();
+          loadDonations(); // Reload the donation history
+        } else {
+          alert('Error submitting donation: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error submitting donation:', error);
+        alert('Unable to submit donation. Please try again.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Donation';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!checkAuth()) return;
+      updateDate();
+      getUserName();
+      loadDonations();
+
+      // Add form submission handler
+      document.getElementById('donation-form').addEventListener('submit', submitDonation);
+    });
+  </script>
+</body>
+</html>
+

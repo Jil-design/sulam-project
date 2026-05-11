@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Masjid Kg Tobobon – Donations</title>
+  <title>Masjid Kg. Bandulan – Donations</title>
   <link rel="stylesheet" href="/css/style.css" />
   <!-- Google Fonts: Amiri (Arabic-inspired serif) + Nunito Sans (clean body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -32,14 +32,14 @@
           </svg>
         </div>
         <div>
-          <h2 class="sidebar-title">Masjid Kg Tobobon</h2>
-          <p class="sidebar-sub">Kg Tobobon, Sabah</p>
+          <h2 class="sidebar-title">Masjid Kg. Bandulan</h2>
+          <p class="sidebar-sub">Kg. Bandulan, Sabah</p>
         </div>
       </div>
 
       <!-- Navigation links -->
       <nav class="sidebar-nav">
-        <a href="dashboard.html" class="nav-item">
+        <a href="admin_dashboard.html" class="nav-item">
           <span class="nav-icon">🏠</span> Dashboard
         </a>
         <a href="prayer.html" class="nav-item">
@@ -74,46 +74,59 @@
 
 
       <!-- ==================================================
-           SECTION: DONATION TRACKING
+           SECTION: DONATION ANALYTICS
       ================================================== -->
       <section id="section-donations" class="section active">
 
-        <!-- Donation total summary card -->
-        <div class="card donation-summary">
-          <p class="donation-label">Total Donations Collected</p>
-          <p class="donation-total" id="donation-display">RM 0.00</p>
+        <!-- Analytics controls -->
+        <div class="card">
+          <div class="card-header">
+            <h3>📊 Donation Analytics</h3>
+          </div>
+          <div class="analytics-controls">
+            <div class="filter-group">
+              <label>Time Period:</label>
+              <select id="analytics-period" onchange="loadAnalytics()">
+                <option value="week">This Week</option>
+                <option value="month" selected>This Month</option>
+                <option value="year">This Year</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <!-- Add donation form -->
-        <div class="card" style="margin-top:1.5rem;">
-          <div class="card-header">
-            <h3>💰 Record Donation</h3>
+        <!-- Analytics summary cards -->
+        <div class="stats-row">
+          <div class="stat-card green">
+            <div class="stat-icon">💰</div>
+            <div>
+              <p class="stat-label">Total Donations</p>
+              <p class="stat-value" id="analytics-total">RM 0.00</p>
+            </div>
           </div>
-          <p class="section-desc">Enter the donation amount to add it to the running total.</p>
-
-          <div class="input-group">
-            <label for="donation-amount">Amount (RM)</label>
-            <input type="number" id="donation-amount" placeholder="e.g. 50.00" min="0" step="0.01" />
+          <div class="stat-card teal">
+            <div class="stat-icon">📈</div>
+            <div>
+              <p class="stat-label">Number of Donations</p>
+              <p class="stat-value" id="analytics-count">0</p>
+            </div>
           </div>
-          <div class="input-group">
-            <label for="donation-note">Note (optional)</label>
-            <input type="text" id="donation-note" placeholder="e.g. Jumaat collection" />
+          <div class="stat-card gold">
+            <div class="stat-icon">📊</div>
+            <div>
+              <p class="stat-label">Average Donation</p>
+              <p class="stat-value" id="analytics-average">RM 0.00</p>
+            </div>
           </div>
-          <button class="btn btn-primary" onclick="addDonation()">
-            ➕ Add Donation
-          </button>
-          <p id="donation-saved-msg" class="success-msg hidden">✔ Donation recorded!</p>
         </div>
 
-        <!-- Donation history log -->
-        <div class="card" style="margin-top:1.5rem;">
+        <!-- Recent donations -->
+        <div class="card">
           <div class="card-header">
-            <h3>📜 Donation History</h3>
-            <!-- Reset button to clear all donations -->
-            <button class="btn btn-danger-sm" onclick="resetDonations()">Reset Total</button>
+            <h3>📜 Recent User Donations</h3>
           </div>
-          <div id="donation-history">
-            <!-- Filled dynamically by JS -->
+          <div id="analytics-donations">
+            <p class="empty-state">Loading donation analytics...</p>
           </div>
         </div>
 
@@ -125,14 +138,62 @@
   <!-- Link the JavaScript file -->
   <script src="/js/script.js"></script>
   <script>
-    // Render donation history and total
-    (async () => {
-      await renderDonationHistory();
-    })();
+    const API_URL = 'http://localhost:5000/api';
+
+    function getAuthHeaders() {
+      const token = localStorage.getItem('token');
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    async function loadAnalytics() {
+      const period = document.getElementById('analytics-period').value;
+      const totalEl = document.getElementById('analytics-total');
+      const countEl = document.getElementById('analytics-count');
+      const averageEl = document.getElementById('analytics-average');
+      const donationsEl = document.getElementById('analytics-donations');
+
+      try {
+        const response = await fetch(`${API_URL}/donations/analytics?period=${period}`, {
+          headers: getAuthHeaders(),
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          totalEl.textContent = `RM ${data.total.toFixed(2)}`;
+          countEl.textContent = data.count;
+          averageEl.textContent = `RM ${data.average.toFixed(2)}`;
+
+          if (data.donations.length === 0) {
+            donationsEl.innerHTML = '<p class="empty-state">No donations found for this period.</p>';
+          } else {
+            donationsEl.innerHTML = data.donations.slice(0, 10).map(donation => `
+              <div class="donation-history-item">
+                <div>
+                  <span class="donation-amount-pos">+ RM ${Number(donation.amount).toFixed(2)}</span>
+                  <span class="donation-note-txt">– ${donation.note || 'Donation'}</span>
+                </div>
+                <span class="donation-date">${new Date(donation.created_at).toLocaleDateString()}</span>
+              </div>
+            `).join('');
+          }
+        } else {
+          donationsEl.innerHTML = '<p class="empty-state">Unable to load analytics.</p>';
+        }
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+        donationsEl.innerHTML = '<p class="empty-state">Unable to load analytics.</p>';
+      }
+    }
+
     // Override handleLogout for donations page to redirect to login
     function handleLogout() {
       window.location.href = '/index.html';
     }
+
+    // Load analytics on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAnalytics();
+    });
   </script>
 </body>
 </html></content>
